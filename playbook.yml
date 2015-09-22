@@ -64,3 +64,18 @@
       git: repo=https://github.com/kurron/docker-monitor-compose.git dest={{ ansible_env.HOME }}/GitHub/docker-monitor-compose
     - name: Pull Down Data Pump 
       git: repo=https://github.com/kurron/docker-monitor-jmeter.git dest={{ ansible_env.HOME }}/GitHub/docker-monitor-jmeter
+
+- name: Update Hosts File 
+  hosts: Ubuntu
+  sudo: True
+  tasks:
+    - name: Add MongoDB entry 
+      lineinfile: dest=/etc/hosts line="127.0.0.1 mongodb" 
+    - name: Add Redis entry 
+      lineinfile: dest=/etc/hosts line="127.0.0.1 redis" 
+    - name: Add MySQL entry 
+      lineinfile: dest=/etc/hosts line="127.0.0.1 mysql" 
+    - name: Add PostgreSQL entry 
+      lineinfile: dest=/etc/hosts line="127.0.0.1 postgresql" 
+    - name: Add RabbitMQ entry 
+      lineinfile: dest=/etc/hosts line="127.0.0.1 rabbitmq" 
