@@ -1,18 +1,12 @@
 #Overview
 This is an [Ansible](http://www.ansible.com/) playbook designed to greatly simplify the installation 
-of [MongoDB](https://www.mongodb.org/) into an [Ubuntu 14.04](http://www.ubuntu.com/) instance.  The playbook is:
-
-* quick -- normally taking only a few seconds to execute
-* configurable -- some of the more useful MongoDB settings are exposed as a single configuration file
-* convenient -- the default settings enable the most advanced storage engine MongoDB supports and are suitable for
-many projects
+of application monitoring simulation environment into an [Ubuntu 14.04](http://www.ubuntu.com/) instance.
 
 #Prerequisites
 
 * an Ubuntu 14.04 Server instance with [SSH](http://www.openssh.com/) enabled and working
-* the instance must have an [XFS](https://en.wikipedia.org/wiki/XFS) partition large enough to store MongoDB's data files
 * the instance must have a user that has `sudo` privledges
-* the instance should have 4GB of RAM -- the default configuration allows MongoDB to claim 3GB of it
+* the instance should have 4GB of RAM
 * a box with the most current Ansible installed -- all testing was done using Ansible 1.9.3 on an Ubuntu 14.04 desktop talking 
 to an Ubuntu 14.04 server
  
@@ -21,18 +15,17 @@ Since this project is just a collection of configuration and data files for Ansi
 
 #Installation
 The first step is to get the files onto your Ansible box.  A great way is to use [Git](https://git-scm.com/) and
-simply clone this project via `git clone https://github.com/kurron/ansible-mongodb.git`.  Another option is to 
-[download the zip](https://github.com/kurron/ansible-mongodb/archive/master.zip) directly from GitHub.
+simply clone this project via `git clone https://github.com/kurron/ansible-monitor-provision`.  Another option is to 
+[download the zip](https://github.com/kurron/ansible-monitor-provision/archive/master.zip) directly from GitHub.
 
 Once you have the files available to you, you are going to have to edit the `hosts` file with a text editor.  The 
 file is documented and should be easily understood. **You must also edit the `ansible.cfg` file, specifically the 
 `remote_user` property.**  Failure to do this will prevent Ansible from SSH'ing into the instance.
 
-To install MongoDB all you have to do is issue `./playbook.yml` from the command line.  Ansible will ask you for the password 
+To install the environment all you have to do is issue `./playbook.yml` from the command line.  Ansible will ask you for the password 
 of the SSH account being used as well as the password to use for `sudo` (normally, you can just hit `Enter` here). You will 
-also be prompted for configuration values.  **You must provide the directory to use to store the database files.** The other
-values have reasonable defaults that can optionally be changed. the In a few moments your instance should have the most current 
-MongoDB installed and running.  **Please note that you must reboot the instance in order for some of the optimizations to take affect.** 
+also be prompted for configuration values that have reasonable defaults that can optionally be changed. the In a few moments your instance 
+should be provisioned and ready to go.  **Please note that you must reboot the instance in order for some of the optimizations to take affect.** 
 
 #Tips and Tricks
 
