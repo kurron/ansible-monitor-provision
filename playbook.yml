@@ -15,16 +15,19 @@
       prompt: "The account to add to the docker group."
       private: no
       default: "vagrant"
+    - name: "composeVersion"
+      prompt: "Docker Compose version to install."
+      private: no
+      default: "1.4.1"
+
 
   tasks:
-#   - debug: msg="notablescan = {{ notablescan }}"
-    - name: Install wget
-      apt: name=wget state=latest update_cache=true cache_valid_time=600
+    - debug: msg="userAccount = {{ userAccount }}"
+    - debug: msg="composeVersion = {{ composeVersion }}"
     - name: Install cURL
-      apt: name=curl state=latest update_cache=true cache_valid_time=600
+      apt: name=curl state=latest update_cache=false cache_valid_time=600
     - name: Download Docker Installation Script
-#     get_url: url=https://get.docker.com/ dest=/root/install-docker mode=0550
-      command: /usr/bin/curl --output /root/install-docker https://get.docker.com/
+      command: /usr/bin/curl --location --output /root/install-docker https://get.docker.com/
     - name: Set Permission Bits On The Docker Installation Script
       file: path=/root/install-docker owner=root group=root mode=0500 
     - name: Execute Docker Installation Script
@@ -35,6 +38,15 @@
       user: name={{ userAccount }} groups=docker 
     - name: Restart Docker
       command: service docker restart
+    - name: Test Docker
+      command: docker run hello-world 
+    - name: Download Docker Compose Script
+      shell: /usr/bin/curl --location --output /usr/local/bin/docker-compose https://github.com/docker/compose/releases/download/{{ composeVersion }}/docker-compose-`uname -s`-`uname -m` 
+    - name: Set Permission Bits On The Docker Compose Script
+      file: path=/usr/local/bin/docker-compose owner=root group=root mode=0555 
+    - name: Echo Docker Compose version
+      command: docker-compose --version 
+
 
 #   - name: Set the permissions on the specified data directory
 #     file: path={{ dbPath }} owner=mongodb group=mongodb mode=0775 state=directory 
