@@ -25,7 +25,7 @@
     - debug: msg="userAccount = {{ userAccount }}"
     - debug: msg="composeVersion = {{ composeVersion }}"
     - name: Install cURL
-      apt: name=curl state=latest update_cache=false cache_valid_time=600
+      apt: name=curl state=latest update_cache=true cache_valid_time=600
     - name: Download Docker Installation Script
       command: /usr/bin/curl --location --output /root/install-docker https://get.docker.com/
     - name: Set Permission Bits On The Docker Installation Script
@@ -39,16 +39,28 @@
     - name: Restart Docker
       command: service docker restart
     - name: Test Docker
-      command: docker run hello-world 
+      command: docker run hello-world
     - name: Download Docker Compose Script
-      shell: /usr/bin/curl --location --output /usr/local/bin/docker-compose https://github.com/docker/compose/releases/download/{{ composeVersion }}/docker-compose-`uname -s`-`uname -m` 
+      shell: /usr/bin/curl --location --output /usr/local/bin/docker-compose https://github.com/docker/compose/releases/download/{{ composeVersion }}/docker-compose-`uname -s`-`uname -m`
     - name: Set Permission Bits On The Docker Compose Script
-      file: path=/usr/local/bin/docker-compose owner=root group=root mode=0555 
+      file: path=/usr/local/bin/docker-compose owner=root group=root mode=0555
     - name: Echo Docker Compose version
-      command: docker-compose --version 
+      command: docker-compose --version
 
+- name: Install Git
+  hosts: Ubuntu
+  sudo: True
+  tasks:
+    - name: Install Git
+      apt: name=git state=latest update_cache=true cache_valid_time=600
 
-#   - name: Set the permissions on the specified data directory
-#     file: path={{ dbPath }} owner=mongodb group=mongodb mode=0775 state=directory 
-#   - name: Restart MongoDB 
-#     service: name=mongod state=restarted
+- name: Install Git Projects
+  hosts: Ubuntu
+  sudo: False
+  tasks:
+    - name: Make GitHub Directory
+      file: path={{ ansible_env.HOME }}/GitHub state=directory mode=0755
+    - name: Pull Down Monitoring Infrastructure
+      git: repo=https://github.com/kurron/docker-monitor-compose.git dest={{ ansible_env.HOME }}/GitHub/docker-monitor-compose
+    - name: Pull Down Data Pump 
+      git: repo=https://github.com/kurron/docker-monitor-jmeter.git dest={{ ansible_env.HOME }}/GitHub/docker-monitor-jmeter
