@@ -7,44 +7,36 @@
     - name: create groups based on distribution
       group_by: key={{ ansible_distribution }}
 
-- name: Install MongoDB
+- name: Install Docker
   hosts: Ubuntu
   sudo: True
   vars_prompt:
-    - name: "dbPath"
-      prompt: "Where to write the database files to. Should be a pre-exiting folder that is an XFS file system."
+    - name: "userAccount"
+      prompt: "The account to add to the docker group."
       private: no
-    - name: "engine"
-      prompt: "Storage engine to use: wiredTiger or mmapv1."
-      private: no
-      default: "wiredTiger"
-    - name: "cacheSizeGB"
-      prompt: "how much RAM, in GB, is MongoDB allowed to acquire for its own use?"
-      private: no
-      default: "3"
-    - name: "notablescan"
-      prompt: "Refuse to run queries that are not backed by an index. Set to 1 during development and 0 in production."
-      private: no
-      default: "1"
+      default: "vagrant"
 
   tasks:
-    - debug: msg="dbPath = {{ dbPath }}"
-    - debug: msg="engine = {{ engine }}"
-    - debug: msg="cacheSizeGB = {{ cacheSizeGB }}"
-    - debug: msg="notablescan = {{ notablescan }}"
-    - name: Install Repository keys
-      apt_key: state=present keyserver=keyserver.ubuntu.com id=7F0CEB10
-    - name: Install MongoDB repository
-      apt_repository: repo='deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.0 multiverse' state=present
-    - name: Install MongoDB
-      apt: name=mongodb-org state=latest update_cache=true cache_valid_time=600
-    - name: Copy the custom configuration file into /etc 
-      template: src=templates/mongod.conf dest=/etc/mongod.conf mode=0444 backup=yes force=yes
-    - name: Set the permissions on the specified data directory
-      file: path={{ dbPath }} owner=mongodb group=mongodb mode=0775 state=directory 
-    - name: Copy the huge pages disablement script
-      copy: src=files/disable-transparent-hugepages dest=/etc/init.d/disable-transparent-hugepages mode=0755 backup=no force=yes
-    - name: Make sure the script runs at boot time 
-      command: /usr/sbin/update-rc.d disable-transparent-hugepages defaults 
-    - name: Restart MongoDB 
-      service: name=mongod state=restarted
+#   - debug: msg="notablescan = {{ notablescan }}"
+    - name: Install wget
+      apt: name=wget state=latest update_cache=true cache_valid_time=600
+    - name: Install cURL
+      apt: name=curl state=latest update_cache=true cache_valid_time=600
+    - name: Download Docker Installation Script
+#     get_url: url=https://get.docker.com/ dest=/root/install-docker mode=0550
+      command: /usr/bin/curl --output /root/install-docker https://get.docker.com/
+    - name: Set Permission Bits On The Docker Installation Script
+      file: path=/root/install-docker owner=root group=root mode=0500 
+    - name: Execute Docker Installation Script
+      shell: /root/install-docker 
+    - name: Set Memory and Swap Accounting
+      lineinfile: dest=/etc/default/grub regexp='^GRUB_CMDLINE_LINUX=""' line='GRUB_CMDLINE_LINUX="cgroup_enable=memory swapaccount=1"'
+    - name: Add account to the docker group 
+      user: name={{ userAccount }} groups=docker 
+    - name: Restart Docker
+      command: service docker restart
+
+#   - name: Set the permissions on the specified data directory
+#     file: path={{ dbPath }} owner=mongodb group=mongodb mode=0775 state=directory 
+#   - name: Restart MongoDB 
+#     service: name=mongod state=restarted
