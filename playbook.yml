@@ -9,6 +9,7 @@
 
 - name: Install Docker
   hosts: Ubuntu
+# hosts: nobody
   sudo: True
   vars_prompt:
     - name: "userAccount"
@@ -79,3 +80,25 @@
       lineinfile: dest=/etc/hosts line="127.0.0.1 postgresql" 
     - name: Add RabbitMQ entry 
       lineinfile: dest=/etc/hosts line="127.0.0.1 rabbitmq" 
+
+- name: Install Newrelic
+  hosts: Ubuntu
+  sudo: True
+  vars_prompt:
+    - name: "apiKey"
+      prompt: "The Newrelic API key to use."
+      private: no
+      default: "9a3465dc990aa65ee1037041a7d0f770ef428cfd"
+  tasks:
+    - name: Add newrelic repository
+      apt_repository: repo='deb http://apt.newrelic.com/debian/ newrelic non-free' state=present
+    - name: Add newrelic keyfile
+      apt_key: url=https://download.newrelic.com/548C16BF.gpg state=present
+    - name: Add newrelic agent
+      apt: name=newrelic-sysmond state=present update_cache=yes
+    - name: Add license key to the configuration
+      command: nrsysmond-config --set license_key={{ apiKey }}
+    - name: Add newrelic account to the docker group so it can monitor containers
+      user: name=newrelic groups=docker
+    - name: Restart the agent
+      service: name=newrelic-sysmond state=restarted
