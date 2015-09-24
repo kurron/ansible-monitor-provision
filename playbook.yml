@@ -7,6 +7,13 @@
     - name: create groups based on distribution
       group_by: key={{ ansible_distribution }}
 
+- name: Set Hostname
+  hosts: Ubuntu
+  sudo: True
+  tasks:
+    - name: Set the hostname to clean-slate
+      hostname: name=clean-slate
+
 - name: Install Docker
   hosts: Ubuntu
 # hosts: nobody
