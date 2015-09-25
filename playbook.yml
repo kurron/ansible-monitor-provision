@@ -28,7 +28,6 @@
       private: no
       default: "1.4.1"
 
-
   tasks:
     - debug: msg="userAccount = {{ userAccount }}"
     - debug: msg="composeVersion = {{ composeVersion }}"
@@ -109,3 +108,25 @@
       user: name=newrelic groups=docker
     - name: Restart the agent
       service: name=newrelic-sysmond state=restarted
+
+- name: Configure Rsyslog To Forward to Loggly
+  hosts: Ubuntu
+  sudo: True
+  vars_prompt:
+    - name: "logglyKey"
+      prompt: "The Loggly API key to use."
+      private: no
+      default: "91ec9498-62c1-42fc-b9e9-a977628cb17d"
+    - name: "logglyTag"
+      prompt: "The Loggly Tag to use."
+      private: no
+      default: "monitor-experiment"
+  tasks:
+    - debug: msg="logglyKey = {{ logglyKey }}"
+    - debug: msg="logglyPath = {{ logglyTag }}"
+    - name: Copy Rsyslog Configuration File 
+      template: src=templates/loggly.conf dest=/etc/rsyslog.d/22-loggly.conf mode=0444 backup=yes force=yes
+    - name: Restart the Rsyslog
+      service: name=rsyslog state=restarted
+    - name: Send a test message 
+      command: logger 'Hello From Ansible!'
