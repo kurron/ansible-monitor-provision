@@ -6,7 +6,7 @@ of the application monitoring simulation environment into an [Ubuntu 14.04](http
 
 * an Ubuntu 14.04 Server instance with [SSH](http://www.openssh.com/) enabled and working
 * the instance must have a user that has `sudo` privledges
-* the instance should have at least 4GB of RAM
+* the instance should have at least 6GB of RAM
 * a box with the most current Ansible installed -- all testing was done using Ansible 1.9.3 on an Ubuntu 14.04 desktop talking to an Ubuntu 14.04 server
  
 #Building
