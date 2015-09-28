@@ -120,4 +120,9 @@
     - debug: msg="dataDogKey = {{ dataDogKey }}"
     - name: Run the datadog installation script
       shell: DD_API_KEY={{ dataDogKey }} bash -c "$(curl -L https://raw.githubusercontent.com/DataDog/dd-agent/master/packaging/datadog-agent/source/install_agent.sh)"
-
+    - name: Add account to the docker group 
+      user: name=dd-agent groups=docker 
+    - name: Copy Docker configuration file 
+      copy: src=files/docker.yaml dest=/etc/dd-agent/conf.d/docker.yaml owner=dd-agent group=root mode=0444
+    - name: Restart the agent
+      service: name=datadog-agent state=restarted 
