@@ -126,5 +126,7 @@
       copy: src=files/docker.yaml dest=/etc/dd-agent/conf.d/docker.yaml owner=dd-agent group=root mode=0444
     - name: Copy RabbitMQ configuration file
       copy: src=files/rabbitmq.yaml dest=/etc/dd-agent/conf.d/rabbitmq.yaml owner=dd-agent group=root mode=0444
+    - name: Copy HTTP Check configuration file
+      copy: src=files/http_check.yaml dest=/etc/dd-agent/conf.d/http_check.yaml owner=dd-agent group=root mode=0444
     - name: Restart the agent
       service: name=datadog-agent state=restarted 

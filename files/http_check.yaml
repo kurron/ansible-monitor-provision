@@ -1,0 +1,59 @@
+init_config:
+  # Change default path of trusted certificates
+  # ca_certs: /etc/ssl/certs/ca-certificates.crt
+
+instances:
+  - name: API Gateway Service
+    url: http://localhost:8000/operations/health
+    timeout: 1
+    threshold: 3
+    window: 5
+    include_content: true
+    collect_response_time: true
+    skip_event: false
+
+  - name: MongoDB Service
+    url: http://localhost:8100/operations/health
+    timeout: 1
+    threshold: 3
+    window: 5
+    include_content: true
+    collect_response_time: true
+    skip_event: false
+
+  - name: Redis Service
+    url: http://localhost:8200/operations/health
+    timeout: 1
+    threshold: 3
+    window: 5
+    include_content: true
+    collect_response_time: true
+    skip_event: false
+
+  - name: MySQL Service
+    url: http://localhost:8300/operations/health
+    timeout: 1
+    threshold: 3
+    window: 5
+    include_content: true
+    collect_response_time: true
+    skip_event: false
+
+  - name: PostgreSQL Service
+    url: http://localhost:8400/operations/health
+    timeout: 1
+    threshold: 3
+    window: 5
+    include_content: true
+    collect_response_time: true
+    skip_event: false
+
+  - name: RabbitMQ Service
+    url: http://localhost:8500/operations/health
+    timeout: 1
+    threshold: 3
+    window: 5
+    include_content: true
+    collect_response_time: true
+    skip_event: false
+
