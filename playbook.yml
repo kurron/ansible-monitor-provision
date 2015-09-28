@@ -107,3 +107,17 @@
       command: /usr/sbin/service rsyslog restart
     - name: Send a test message 
       command: logger 'Hello From Ansible!'
+
+- name: Install Data Dog
+  hosts: Ubuntu
+  sudo: True
+  vars_prompt:
+    - name: "dataDogKey"
+      prompt: "The Data Dog API Key to use."
+      private: no
+      default: "4a2ad6741d78c9f690510083065a0bff"
+  tasks:
+    - debug: msg="dataDogKey = {{ dataDogKey }}"
+    - name: Run the datadog installation script
+      shell: DD_API_KEY={{ dataDogKey }} bash -c "$(curl -L https://raw.githubusercontent.com/DataDog/dd-agent/master/packaging/datadog-agent/source/install_agent.sh)"
+
