@@ -22,7 +22,7 @@
     - name: "userAccount"
       prompt: "The account to add to the docker group."
       private: no
-      default: "vagrant"
+      default: "ubuntu"
     - name: "composeVersion"
       prompt: "Docker Compose version to install."
       private: no
@@ -127,6 +127,6 @@
     - name: Copy Rsyslog Configuration File 
       template: src=templates/loggly.conf dest=/etc/rsyslog.d/22-loggly.conf mode=0444 backup=yes force=yes
     - name: Restart the Rsyslog
-      service: name=rsyslog state=restarted
+      command: /usr/sbin/service rsyslog restart
     - name: Send a test message 
       command: logger 'Hello From Ansible!'
