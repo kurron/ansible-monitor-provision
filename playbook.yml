@@ -130,3 +130,18 @@
       command: /usr/sbin/service rsyslog restart
     - name: Send a test message 
       command: logger 'Hello From Ansible!'
+
+- name: Install Sysdig
+# hosts: Ubuntu
+  hosts: nobody
+  sudo: True
+  tasks:
+      - name: Download the signing key
+        apt_key: url=https://s3.amazonaws.com/download.draios.com/DRAIOS-GPG-KEY.public state=present
+      - name: Add the Apt repository
+        apt_repository: repo='deb http://download.draios.com/stable/deb stable-$(ARCH)/' state=present
+      - name: Install Headers
+        shell: apt-get -y install linux-headers-$(uname -r)
+      - name: Install Sysdig
+        apt: name=sysdig state=latest update_cache=true
+
