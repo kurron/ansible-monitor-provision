@@ -132,3 +132,16 @@
       copy: src=files/redisdb.yaml dest=/etc/dd-agent/conf.d/redisdb.yaml owner=dd-agent group=root mode=0444
     - name: Restart the agent
       service: name=datadog-agent state=restarted 
+
+- name: Install Sysdig
+  hosts: Ubuntu
+  sudo: True
+  tasks:
+      - name: Download the signing key
+        apt_key: url=https://s3.amazonaws.com/download.draios.com/DRAIOS-GPG-KEY.public state=present
+      - name: Add the Apt repository
+        apt_repository: repo='deb http://download.draios.com/stable/deb stable-$(ARCH)/' state=present
+      - name: Install Headers
+        shell: apt-get -y install linux-headers-$(uname -r)
+      - name: Install Sysdig
+        apt: name=sysdig state=latest update_cache=true
